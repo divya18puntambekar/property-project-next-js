@@ -34,4 +34,6 @@ model Properties {
   state         String
   zipcode       String
   image         String
+  weekly_rates  Int
+  monthly_rates Int
 }
