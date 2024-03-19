@@ -1,0 +1,7 @@
+export { default as Navbar } from "@/component/Navbar" 
+export { default as Footer } from "@/component/Footer"
+export { default as HomepageProperties } from "@/component/HomepageProperties"
+export { default as Infoboxes } from "@/component/Infoboxes"
+export { default as PropertyCard } from "@/component/PropertyCard"
+export { default as Hero } from "@/component/Hero"
+export { default as InfoboxProperties } from "@/component/InfoboxProperties"

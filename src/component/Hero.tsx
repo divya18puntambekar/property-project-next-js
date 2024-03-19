@@ -3,7 +3,7 @@ import React from 'react'
 const Hero = () => {
   return (
     <>
-    <section className='bg-blue-700'>
+    <section className='bg-blue-700 pb-9'>
       <div>
         <p className='text-center text-white text-5xl font-bold font-serif underline pt-9'>Find The Perfect Rental</p> 
         <p className='text-center text-white font-bold font-serif pt-1 text-2xl'>Discovers the perferct property that suits your needs</p>

@@ -8,3 +8,8 @@
 .property_search button{
   margin: 8px;
 }
+
+.notFound{
+  margin-left: 46%;
+  margin-top: 3rem;
+}
