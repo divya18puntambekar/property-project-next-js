@@ -1,12 +1,11 @@
 import { connectToDb } from "@/app/utils";
 import { NextResponse } from "next/server";
 import prisma from "../../../../prisma";
-
+connectToDb();
 // POST : api/properties
 export const POST = async (req: Request) => {
     try {
         const { userId, name, description, square_feet, propertyType, house_no, street, city, state, zipcode, image, weekly_rates, monthly_rates } = await req.json();
-        await connectToDb();
         const propertyData = await prisma.properties.create({
             data: {
                 userId,
@@ -34,7 +33,6 @@ export const POST = async (req: Request) => {
 // GET: api/properties
 export const GET = async(req: Request) => {
     try {
-        await connectToDb();
         const propertyData = await prisma.properties.findMany();
         return NextResponse.json({ propertyData }, { status: 200 });
     } catch(error: any){

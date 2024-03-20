@@ -1,9 +1,26 @@
-import React from 'react'
+"use client";
+import DotLoader from "react-spinners/DotLoader"
+import { CSSProperties } from "react";
 
-const loadingPage = () => {
+const override: CSSProperties = {
+  // display: "block",
+  margin: "0 auto",
+  // minWidth: "100%",
+  borderColor: "blue",
+}
+const LoadingPage = (loading: any) => {
   return (
-    <div>loading</div>
+    <div className="flex h-screen items-center">
+      <DotLoader  
+        color= '#36d7b7'
+        loading={loading} 
+        size={50}
+        cssOverride={override}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </div>
   )
 }
 
-export default loadingPage
+export default LoadingPage

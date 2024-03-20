@@ -1,7 +1,25 @@
+"use client"
 import { PropertyCard } from '@/app/api/route/route'
-import properties from "../assets/files/properties.json"
+// import properties from "../assets/files/properties.json"
+import axios from 'axios';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 const HomepageProperties = () => {
+  const [properties, setProperties] = useState([]);
+  useEffect(() => {
+    async function fetchProperties(){
+      try{
+        const response = await axios.get('/api/properties');
+        console.log(response.data.propertyData);
+        
+        setProperties(response.data.propertyData)
+      } catch(error) {
+        console.log(error)
+      }
+    }
+
+    fetchProperties();
+  }, [])
     const recentProperties = properties.sort(() => Math.random() - Math.random()).slice(0,3);
   return (
    <>

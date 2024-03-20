@@ -1,32 +1,28 @@
 import Image from "next/image"
 import Link from "next/link"
+import { FaMoneyBill } from "react-icons/fa"
 interface Props{
     property: any
 }
 const PropertyCard = ({property}:Props) => {
-    const getRates = () =>{
-        const { rates } = property;
-        if(rates.monthly){
-            return `${rates.monthly}/mo`;
-        } else if(rates.weekly) {
-            return `${rates.weekly}/wk`;
-        } else if(rates.nightly) {
-            return `${rates.nightly}/night`;
+    const getRates = () => {
+        if(property.weekly_rates){
+            return `${property.weekly_rates}/wk`; 
+        }else{ 
+            return `${property.monthly_rates}/mo`;
         }
-    }
-   console.log(property.images[0]);
-   
+    } 
   return (
     <>
     <div className="rounded-xl shadow-md relative">
-        <Image 
-            src=  {`/assets/images/${property.images[0]}`}
-            alt="property" 
-            width={0} 
-            height={0}
-            sizes="100vw"
-            className = "w-full h-auto rounded-t-xl"
-            />
+        <Image
+          src={`/assets/images/${property.image}`}
+          alt="property"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="rounded-t-xl w-96 h-72"
+        />
         <div className = "p-4">
             <div className="text-left md:text-center lg:text-left mb-6">
                 <div className="text-gray-600">{property.type}</div>
@@ -38,30 +34,21 @@ const PropertyCard = ({property}:Props) => {
             <div className="flex justify-center">
                 <p>
                     <i className="fa-solid fa-ruler-combined"></i>
-                    {property.beds} <span className ="md:hidden lg:inline">Bed</span>
-                </p> {" "}
-                <p>
-                    <i className="fa-solid fa-ruler-combined pl-2"></i>
-                    {property.baths} <span className ="md:hidden lg:inline">Bath</span>
-                </p>
-                <p>
-                    <i className="fa-solid fa-ruler-combined"></i>
                     {property.square_feet} <span className ="md:hidden lg:inline">sqft</span>
                 </p>
             </div>
         </div>
         <div className="flex justify-center gap-4 text-green-900 text-sm mb-4">
-            { property.rates.nightly && <p><i className="fa-solid fa-money-bill"></i> Night</p> }
-            { property.rates.weekly && <p><i className="fa-solid fa-money-bill"></i> Weekly</p> }
-            { property.rates.monthly && <p><i className="fa-solid fa-money-bill"></i> Month</p> }
+            { property.weekly_rates && <span><FaMoneyBill /> Weekly</span> }
+            { property.monthly_rates && <span><FaMoneyBill /> Monthly</span> }
         </div>
         <div className="border border-gray-100 mb-5"></div>
         <div className="flex flex-col lg:flex justify-between mb-4">
             <div className="flex aligh-middle gap-2 mb-4 lg:mb-0">
                 <i className="fa-solid fa-location-dot tex-lg text-orange-700"></i>
-                <p className="text-orange-700">{property.location.city}, {property.location.state}</p>
+                <p className="text-orange-700">{property.city}, {property.state}</p>
             </div>
-            <Link href="/properties" className="bg-blue-500 h-[36px] hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm">Details</Link>
+            <Link href="/properties" className="bg-blue-500 h-[36px] hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm propertyDetail">Details</Link>
         </div>
     </div>
     </>

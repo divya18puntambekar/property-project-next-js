@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  height: 100vh;
+}
+
 .property_search {
   margin-left: 26%;
 }
@@ -12,4 +16,9 @@
 .notFound{
   margin-left: 46%;
   margin-top: 3rem;
+}
+
+.propertyDetail{
+  width: 5rem !important;
+  margin-left: 1 rem !important;
 }
