@@ -10,7 +10,7 @@ import { FaGoogle } from 'react-icons/fa';
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const pathname = usePathname();
 
@@ -93,10 +93,7 @@ const Navbar = () => {
           {!isLoggedIn && (
             <div className='hidden md:block md:ml-6'>
               <div className='flex items-center'>
-                <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'>
-                  <FaGoogle className='text-white mr-2' />
-                  <span>Login or Register</span>
-                </button>
+                <Link href = "/Signup" className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4'><FaGoogle className='text-white mr-2' />Login or Register</Link>
               </div>
             </div>
           )}
@@ -228,9 +225,7 @@ const Navbar = () => {
             )}
 
             {!isLoggedIn && (
-              <button className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4'>
-                <span>Login or Register</span>
-              </button>
+              <Link href = "/Signup" className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4'>Login or Register</Link>
             )}
           </div>
         </div>

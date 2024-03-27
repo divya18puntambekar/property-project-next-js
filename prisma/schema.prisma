@@ -17,7 +17,13 @@ model User {
   id                   Int @id @default(autoincrement())
   name                 String
   email                String @unique
-  bookmarkedProperties Properties[] 
+  username             String @unique
+  password             String
+  contact              Int  @unique
+  gender               String
+  bookmarkedProperties Properties[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model Properties {
@@ -33,7 +39,13 @@ model Properties {
   city          String
   state         String
   zipcode       String
-  image         String
+  image         String[]
   weekly_rates  Int
   monthly_rates Int
+  nightly_rates Int?
+  amenties      String[]
+  beds          Int
+  baths         Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

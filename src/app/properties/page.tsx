@@ -26,7 +26,7 @@ const Properties = async () => {
               <PropertyCard key={index} property={property}/>
             ))
           ) : (            
-            <p>No Properties Found</p>
+            <p className='text-center w-full px-5 py-4 font-sans font-bold text-2xl noPropertiesFound'>No Properties Found</p>
           )}
         </div>
       </div>

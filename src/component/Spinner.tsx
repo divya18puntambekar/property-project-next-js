@@ -3,10 +3,12 @@ import DotLoader from "react-spinners/DotLoader"
 import { CSSProperties } from "react";
 
 const override: CSSProperties = {
+  // display: "block",
   margin: "0 auto",
+  // minWidth: "100%",
   borderColor: "blue",
 }
-const LoadingPage = (loading: any) => {
+const Spinner = (loading: any) => {
   return (
     <div className="flex h-screen items-center">
       <DotLoader  
@@ -21,4 +23,4 @@ const LoadingPage = (loading: any) => {
   )
 }
 
-export default LoadingPage
+export default Spinner

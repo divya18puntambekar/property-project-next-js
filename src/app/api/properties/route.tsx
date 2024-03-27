@@ -5,7 +5,10 @@ connectToDb();
 // POST : api/properties
 export const POST = async (req: Request) => {
     try {
-        const { userId, name, description, square_feet, propertyType, house_no, street, city, state, zipcode, image, weekly_rates, monthly_rates } = await req.json();
+        const { userId, name, description, square_feet, propertyType, house_no, street, city, state, zipcode, image, weekly_rates, monthly_rates, nightly_rates, beds, baths, amenties } = await req.json();
+        // const amentiesArray = Array.amenties?;
+        console.log("========", amenties);
+        
         const propertyData = await prisma.properties.create({
             data: {
                 userId,
@@ -20,7 +23,11 @@ export const POST = async (req: Request) => {
                 zipcode,
                 image,
                 weekly_rates,
-                monthly_rates
+                monthly_rates,
+                nightly_rates,
+                beds,
+                baths,
+                amenties 
             }
         })
         return NextResponse.json({ message: "Property added successfully", propertyData }, { status: 200 });

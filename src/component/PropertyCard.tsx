@@ -16,7 +16,7 @@ const PropertyCard = ({property}:Props) => {
     <>
     <div className="rounded-xl shadow-md relative">
         <Image
-          src={`/assets/images/${property.image}`}
+          src={`/assets/images/${property.image[0]}`}
           alt="property"
           width={0}
           height={0}
@@ -39,8 +39,8 @@ const PropertyCard = ({property}:Props) => {
             </div>
         </div>
         <div className="flex justify-center gap-4 text-green-900 text-sm mb-4">
-            { property.weekly_rates && <span><FaMoneyBill /> Weekly</span> }
-            { property.monthly_rates && <span><FaMoneyBill /> Monthly</span> }
+            { property.weekly_rates && <span className="inline-flex items-center"><FaMoneyBill /> Weekly</span> }
+            { property.monthly_rates && <span className="inline-flex items-center"><FaMoneyBill /> Monthly</span> }
         </div>
         <div className="border border-gray-100 mb-5"></div>
         <div className="flex flex-col lg:flex justify-between mb-4">
@@ -48,7 +48,7 @@ const PropertyCard = ({property}:Props) => {
                 <i className="fa-solid fa-location-dot tex-lg text-orange-700"></i>
                 <p className="text-orange-700">{property.city}, {property.state}</p>
             </div>
-            <Link href="/properties" className="bg-blue-500 h-[36px] hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm propertyDetail">Details</Link>
+            <Link href={`/properties/${property.id}`} className="bg-blue-500 h-[36px] hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm propertyDetail">Details</Link>
         </div>
     </div>
     </>
