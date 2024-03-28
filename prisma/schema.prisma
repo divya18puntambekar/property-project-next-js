@@ -19,8 +19,8 @@ model User {
   email                String @unique
   username             String @unique
   password             String
-  contact              Int  @unique
-  gender               String
+  contact              Int?  @unique
+  gender               String?
   bookmarkedProperties Properties[]
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt

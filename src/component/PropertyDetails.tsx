@@ -42,7 +42,7 @@ const PropertyDetails = ({property}:Props) => {
                     <div className="text-blue-600 flex justify-center mt-10">
                         <div className="text-justify">{property.beds} Beds</div>
                         <div className="text-justify ml-5">{property.baths} Baths</div>
-                        <div className="text-justify ml-5">{property.square_feet} Squeare Feet</div>
+                        <div className="text-justify ml-5">{property.square_feet} Square Feet</div>
                     </div>
                     <div className="text-gray-500 mt-10 text-center">{property.description}</div>
                 </div>

@@ -36,11 +36,15 @@ body {
 }
 
 .signupPage{
-  width: 55%;
-  margin-top: 1%;
-  left: 20%;
+  /* width: 55%;
+  margin-top: 1%; */
+  /* left: 20%; */
+  height: 100%;
   padding: 3%;
-   background-color: white !important;
+  background-color: white !important;
+  border: 1px solid #8080807a;
+  border-radius: 3%;
+  padding: 4% 15%;
 }
 
 .noPropertiesFound{
@@ -56,4 +60,25 @@ body {
   padding: 3%;
   background-color: white !important;
   margin-left: 27%;
+}
+
+.signupImage{
+  width: 100%;
+  height: 37.8rem !important;
+}
+
+.signup_page_left_panel {
+  width: 45%;
+}
+
+.signup_left_panel_text{
+  top: 34%;
+  left: 10%;
+  right: 8%;
+}
+
+.signup_page_right_panel {
+  width: 60%;
+  padding: 2% 8%;
+  background-color: white;
 }

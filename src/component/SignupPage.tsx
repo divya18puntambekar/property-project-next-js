@@ -54,9 +54,9 @@ export const SignupPage = () => {
     }
   }
   return (
-    <form className="border-gray-600 signupPage shadow-xl ml-72" onSubmit={onSubmitForm} autoComplete="off" >
-          <h1 className="text-3xl font-semibold">Sign Up!</h1>
-            <div className="sm:col-span-4">
+    <form className="border-gray-600 signupPage shadow-xl" onSubmit={onSubmitForm} autoComplete="off" >
+          <h1 className="text-3xl font-semibold text-center">Sign Up!</h1>
+            <div className=" mt-4 sm:col-span-4">
               <label
                 htmlFor="name"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -74,7 +74,7 @@ export const SignupPage = () => {
                 />
               </div>
             </div>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="mt-4 ">
               <div className="sm:col-span-3">
                 <label
                   htmlFor="email"
@@ -94,7 +94,7 @@ export const SignupPage = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3 mt-4">
                 <label
                   htmlFor="username"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -114,7 +114,7 @@ export const SignupPage = () => {
               </div>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="mt-4">
               <div className="sm:col-span-3">
                 <label
                   htmlFor="contact"
@@ -133,7 +133,7 @@ export const SignupPage = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-3">
+              {/* <div className="sm:col-span-3">
               <label htmlFor="gender"
                 className="block text-sm font-medium leading-6 text-gray-900">Gender</label>
               <div className="mt-4 flex">
@@ -162,10 +162,10 @@ export const SignupPage = () => {
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label
                   htmlFor="password"
@@ -201,16 +201,13 @@ export const SignupPage = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-6 flex items-center gap-x-6">
+            <div className="mt-4 flex items-center gap-x-6 justify-center">
               <button
                 type="submit"
-                className="rounded-full bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="rounded-lg bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 SignUp
               </button>
-            </div>
-            <div>
-              <p className="text-center font-semibold">Already have account?  <Link href= '/login' className="hover:text-blue-700">Login</Link></p>
             </div>
         </form>
   )
