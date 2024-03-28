@@ -1,9 +1,9 @@
 "use client"
-import Link from "next/link";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import bcrypt from "bcryptjs"
+import { toast } from 'react-hot-toast';
 export const SignupPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -37,7 +37,7 @@ export const SignupPage = () => {
         gender: formData.get('gender')
     });
     router.push("/login");
-
+    toast.success('Registered successfully!');
     }catch(error){
       console.log(error);
       const axiosError = error as AxiosError;
