@@ -34,18 +34,18 @@ body {
   width: 100%;
   height: 100vh;
 }
-
+/* 
 .signupPage{
   /* width: 55%;
   margin-top: 1%; */
   /* left: 20%; */
-  height: 100%;
-  padding: 3%;
-  background-color: white !important;
-  border: 1px solid #8080807a;
-  border-radius: 3%;
-  padding: 4% 15%;
-}
+  /* height: 100%;
+  padding: 3%; */
+  /* background-color: white !important; */
+  /* border: 1px solid #8080807a; */
+  /* border-radius: 3%;
+  padding: 4% 15%; */
+/* }  */
 
 .noPropertiesFound{
   text-align: center;
@@ -54,12 +54,18 @@ body {
 }
 
 .loginPage{
-  width: 42%;
+  /* width: 42%;
   margin-top: 9%;
   left: 20%;
   padding: 3%;
   background-color: white !important;
-  margin-left: 27%;
+  margin-left: 27%; */
+  height: 100%;
+  padding: 3%;
+  /* background-color: white !important; */
+  /* border: 1px solid #8080807a; */
+  /* border-radius: 3%; */
+  padding: 4% 15%;
 }
 
 .signupImage{
@@ -67,9 +73,9 @@ body {
   height: 37.8rem !important;
 }
 
-.signup_page_left_panel {
+/* .signup_page_left_panel {
   width: 45%;
-}
+} */
 
 .signup_left_panel_text{
   top: 34%;
@@ -77,8 +83,7 @@ body {
   right: 8%;
 }
 
-.signup_page_right_panel {
+/* .signup_page_right_panel {
   width: 60%;
-  padding: 2% 8%;
-  background-color: white;
-}
+  padding: 1% 8%;
+} */

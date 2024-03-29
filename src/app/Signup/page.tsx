@@ -4,12 +4,12 @@ const page = () => {
   return (
     <>
       <section className="bg-blue-50 flex flex-wrap">
-        <div className="bg-black flex w-full">
+        <div className="grid grid-cols-2 w-full">
           <div className="signup_page_left_panel">
-          <SignupSidebar />
+            <SignupSidebar />
           </div>
-          <div className="signup_page_right_panel">
-          <SignupPage />
+          <div className="signup_page_right_panel bg-blue-100">
+            <SignupPage />
           </div>
         </div>
       </section>

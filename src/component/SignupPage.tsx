@@ -4,123 +4,142 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import bcrypt from "bcryptjs"
 import { toast } from 'react-hot-toast';
+import { validation } from "@/app/utils/validation";
 export const SignupPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    username: "",
     password: "",
-    gender: "",
-    contact: ""
+    contact: "",
+    confirmPassword: "",
+    username: ""
   });
-  // const [userForm, setUserForm] = useState([]);
-  function OnHandleChange(event: any){
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    })
+  const [error, setError] = useState<{ [key: string]: string }>({});
+  function onHandleChange(event: any){
+    const { name, value } = event.target;
+    const validation_form = validation({ ...formData, [name]: value });
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setError((prevError) => ({ ...prevError, [name]: validation_form[name] || null }));
   }
   const onSubmitForm = async (event: any) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-
-    try{      
-      const password = formData.get('password') ?? '';
-      const hashedPassword = await bcrypt.hash(password.toString(), 10);
-      const response = await axios.post("/api/user", {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        username: formData.get('username'),
-        contact: Number(formData.get('contact')), 
-        password: hashedPassword,
-        gender: formData.get('gender')
-    });
-    router.push("/login");
-    toast.success('Registered successfully!');
-    }catch(error){
-      console.log(error);
-      const axiosError = error as AxiosError;
-      if (axios.isAxiosError(axiosError)) {  
-        if(axiosError.response) {
-          const responseData = axiosError.response.data as any;
-          console.log(responseData.error, "error 1");
-        } else {
-          console.log(axiosError.message,"error 2");
+    const validationErrors = validation(formData);
+    const hasErrors = Object.values(validationErrors).some(error => error !== '');
+    
+    console.log("haserror",hasErrors);
+    // debugger
+    
+    if(!hasErrors) {
+      console.log("false");
+      try{              
+        console.log("try");
+        const password = formData.password;
+        console.log("password",password);
+        
+        const hashedPassword = await bcrypt.hash(password.toString(), 10);
+        const response = await axios.post("/api/user", {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.contact, 
+          password: hashedPassword
+      });
+        console.log("response", response);
+        if(response.status === 200){
+          router.push("/login");
+          toast.success('Registered successfully!');
         }
-      } else {
-        console.log("error 3", (error as Error).message);   
+      }catch(error){
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
+          if (axiosError.response) {
+            const responseData = axiosError.response.data;
+            if (typeof responseData === 'string') {
+              toast.error(responseData);
+            } else if (responseData.error === "User already exists!") {
+              toast.error('User already exists!');
+            } else {
+              toast.error('An error occurred while registering. Please try again later.', { position: "bottom-left" });
+            }
+          } else {
+            toast.error('An error occurred while registering. Please try again later.', { position: "bottom-left" });
+          }
+        }
       }
+    } else {
+      console.log("true");
+      setError((prevError) => ({ ...prevError, ...validationErrors }));
+      return;
     }
-  }
+    }
   return (
-    <form className="border-gray-600 signupPage shadow-xl" onSubmit={onSubmitForm} autoComplete="off" >
+    <form className="border-gray-600 shadow-xl ml-12 mt-8 w-5/6 p-8 bg-white" onSubmit={onSubmitForm} autoComplete="off" >
           <h1 className="text-3xl font-semibold text-center">Sign Up!</h1>
-            <div className=" mt-4 sm:col-span-4">
+            <div className="mt-2 sm:col-span-4 h-24">
               <label
                 htmlFor="name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Name
-              </label>
+                Name <span className="text-red-500">*</span>
+              </label> 
               <div className="mt-2">
                 <input
                   id="name"
                   name="name"
                   type="text"
-                  autoComplete="name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1focus:ring-blue-200 sm:text-sm sm:leading-6"
-                  onChange = {OnHandleChange} value={formData.name}
+                  onChange = {onHandleChange} onFocus={onHandleChange} value={formData.name}
                 />
+                <p className="text-red-700 text-sm font-medium mb-1">{error.name}</p>
               </div>
             </div>
-            <div className="mt-4 ">
-              <div className="sm:col-span-3">
-                <label
+
+            {/* <div className="mt-2 sm:col-span-4">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Username <span className="text-red-500">*</span>
+              </label> 
+              <div className="mt-2">
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1focus:ring-blue-200 sm:text-sm sm:leading-6"
+                  onChange = {onHandleChange} onFocus={onHandleChange} value={formData.username}
+                />
+                <p className="text-red-700 text-sm font-medium mb-1">{error.username}</p>
+              </div>
+            </div> */}
+
+            <div className="sm:col-span-4 h-24">
+              {/* email */}
+              <label
                   htmlFor="email"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Email
+                  Email <span className="text-red-500">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="email"
                     name="email"
                     id="text"
-                    autoComplete="given-name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-200 sm:text-sm sm:leading-6"
-                    onChange = {OnHandleChange} value={formData.email}
+                    onChange = {onHandleChange} onFocus={onHandleChange} value={formData.email}
                   />
+                  <p className="text-red-700 text-sm font-medium  mb-2">{error.email}</p>
                 </div>
-              </div>
-
-              <div className="sm:col-span-3 mt-4">
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Username
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-200 sm:text-sm sm:leading-6"
-                    onChange = {OnHandleChange} value={formData.username}
-                  />
-                </div>
-              </div>
             </div>
 
-            <div className="mt-4">
-              <div className="sm:col-span-3">
-                <label
+            <div className="sm:col-span-4 h-24">
+              {/* contact */}
+              <label
                   htmlFor="contact"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Contact No.
+                  Contact No. <span className="text-red-500">*</span>
                 </label>
                 <div className="mt-2">
                   <input
@@ -128,50 +147,19 @@ export const SignupPage = () => {
                     name="contact"
                     id="contact"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-200 sm:text-sm sm:leading-6"
-                    onChange = {OnHandleChange} value={formData.contact}
+                    onChange = {onHandleChange} onFocus={onHandleChange} value={formData.contact}
                   />
+                  <p className="text-red-700 text-sm font-medium mb-2">{error.contact}</p>
                 </div>
-              </div>
-
-              {/* <div className="sm:col-span-3">
-              <label htmlFor="gender"
-                className="block text-sm font-medium leading-6 text-gray-900">Gender</label>
-              <div className="mt-4 flex">
-                  <div className="flex items-center gap-x-3">
-                    <input
-                      id="female"
-                      name="gender"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      value="female"
-                    />
-                    <label htmlFor="female" className="block text-sm font-medium leading-6 text-gray-900">
-                      Female
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-x-3 ml-4">
-                    <input
-                      id="male"
-                      name="gender"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      value="male"
-                    />
-                    <label htmlFor="male" className="block text-sm font-medium leading-6 text-gray-900">
-                      Male
-                    </label>
-                  </div>
-                </div>
-              </div> */}
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 h-24">
               <div className="sm:col-span-3">
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Password
+                  Password <span className="text-red-500">*</span>
                 </label>
                 <div className="mt-2">
                   <input
@@ -179,29 +167,32 @@ export const SignupPage = () => {
                     name="password"
                     id="password"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-200 sm:text-sm sm:leading-6"
-                    onChange = {OnHandleChange} value={formData.password}
+                    onChange = {onHandleChange} onFocus={onHandleChange} value={formData.password}
                   />
+                  <p className="text-red-700 text-sm font-medium mb-2">{error.password}</p>
                 </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="confirm_password"
+                  htmlFor="confirmPassword"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Confirm Password
+                  Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="password"
-                    name="confirm_password"
-                    id="confirm_password"
+                    name="confirmPassword"
+                    id="confirmPassword"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-200 sm:text-sm sm:leading-6"
+                    onChange = {onHandleChange} onFocus={onHandleChange} value={formData.confirmPassword}
                   />
+                  <p className="text-red-700 text-sm font-medium mb-2">{error.confirmPassword}</p>
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-x-6 justify-center">
+            <div className="mt-2 flex items-center gap-x-6 justify-center">
               <button
                 type="submit"
                 className="rounded-lg bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
