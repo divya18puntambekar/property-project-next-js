@@ -21,6 +21,7 @@ model User {
   password             String
   contact              String
   gender               String?
+  image                String?
   bookmarkedProperties Properties[]
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt

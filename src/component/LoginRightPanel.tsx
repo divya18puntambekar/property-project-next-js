@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { LoginValidation } from '@/app/utils/LoginValidation';
 import { useRouter } from "next/navigation";
+import { signIn } from 'next-auth/react';
 const LoginRightPanel = () => {
   const router = useRouter();
     const [formData, setFormData] = useState({
@@ -14,24 +15,32 @@ const LoginRightPanel = () => {
     function onHandleChange(event: any){
       const { name, value } = event.target;
       const validation_form = LoginValidation({ ...formData, [name]: value });
-      console.log('validation_form:', validation_form);
-      console.log('name:', name);
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
       setError((prevError) => ({ ...prevError, [name]: validation_form[name] || null }));
     }    
-    const onSubmitForm = (e: any) => {
+    const onSubmitForm = async (e: any) => {
         e.preventDefault();
         const validationErrors = LoginValidation(formData);
         const hasErrors = Object.values(validationErrors).some(error => error !== '');
         if(!hasErrors){
           try{
-            console.log("no validation message");
+            const res = await signIn("credentials", {
+              email: formData.email,
+              passowrd: formData.password,
+              redirect: false
+            })
+            
+            if(res && res.error) {
+              setError({message: "Invalid credentials!"});
+              return;
+            }
+            // router.push("/")
+            console.log("response login", res);
             toast.success("Login successfull!");
           } catch(error) {
             toast.error("Something went wrong!");
           }
         } else {
-          console.log("validation message");
           setError((prevError) => ({...prevError, ...validationErrors}))
           return;
         }
