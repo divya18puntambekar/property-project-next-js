@@ -1,10 +1,14 @@
 "use client"
-import React from 'react'
+import { AddProperty, AddPropertyImage } from "../../api/route/route"
 
 const page = () => {
-  console.log("get");
   return (
-    <div>Add Property</div>
+    <>
+    <section className="bg-blue-100 flex">
+      <AddProperty />
+      {/* <AddPropertyImage /> */}
+    </section>
+    </>
   )
 }
 

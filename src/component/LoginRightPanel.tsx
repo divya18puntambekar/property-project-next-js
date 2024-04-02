@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { LoginValidation } from '@/app/utils/LoginValidation';
 import { useRouter } from "next/navigation";
 import { signIn } from 'next-auth/react';
+import prisma from '../../prisma';
 const LoginRightPanel = () => {
   const router = useRouter();
     const [formData, setFormData] = useState({
@@ -20,18 +21,28 @@ const LoginRightPanel = () => {
     }    
     const onSubmitForm = async (e: any) => {
         e.preventDefault();
+        // debugger
         const validationErrors = LoginValidation(formData);
         const hasErrors = Object.values(validationErrors).some(error => error !== '');
         if(!hasErrors){
           try{
+            // const res = await signIn("credentials", {
+            //   email: formData.email,
+            //   passowrd: formData.password,
+            //   redirect: false
+            // })
+
             const res = await signIn("credentials", {
               email: formData.email,
-              passowrd: formData.password,
+              password: formData.password,
               redirect: false
-            })
+            });
+            console.log("res", res);
+            
             
             if(res && res.error) {
               setError({message: "Invalid credentials!"});
+              toast.error("credentials error");   
               return;
             }
             // router.push("/")

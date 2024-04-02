@@ -10,18 +10,10 @@ import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 const Navbar = () => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(true);
   const [providers, setProviders] = useState(false);
 
-  const pathname = usePathname();
-
-  // useEffect(() => {
-  //   const setAuthProviders = async () => {
-  //     const response = await getProviders();
-  //     setproviders(response);
-  //   }
-  //   setAuthProviders();
-  // },[])
+    const pathname = usePathname();
 
   useEffect(() => {
     const setAuthProviders = async () => {
@@ -29,8 +21,16 @@ const Navbar = () => {
       setProviders(response);
     };
     setAuthProviders(); // Call the setAuthProviders function
+    console.log("auth providers:::::",setAuthProviders());
   }, []);
-
+  
+  
+  // if (!session) {
+  //   {console.log("session if ::::::",session);}
+  //   return <div>Loading...</div>;
+  // }
+  console.log("session",session);
+  
   return (
     <nav className='bg-blue-700 border-b border-blue-500'>
       <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8'>
@@ -92,7 +92,6 @@ const Navbar = () => {
                 >
                   Properties
                 </Link>
-                {session && (
                   <Link
                     href='/properties/add'
                     className={`${
@@ -101,13 +100,12 @@ const Navbar = () => {
                   >
                     Add Property
                   </Link>
-                )}
               </div>
             </div>
           </div>
 
           {/* <!-- Right Side Menu (Logged Out) --> */}
-          {!session && (
+          {!session ? (
             <div className='hidden md:block md:ml-6'>
               <div className='flex items-center'>
                 { providers && Object.values(providers).map((provider, index) => (
@@ -115,6 +113,8 @@ const Navbar = () => {
                 ))}
               </div>
             </div>
+          ) : (
+           ""
           )}
 
           {/* <!-- Right Side Menu (Logged In) --> */}
@@ -201,6 +201,9 @@ const Navbar = () => {
                       role='menuitem'
                       tabIndex={-1}
                       id='user-menu-item-2'
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        signOut();}}
                     >
                       Sign Out
                     </button>
@@ -243,7 +246,7 @@ const Navbar = () => {
               </Link>
             )}
 
-{!session && (
+            {session && (
             <div className='hidden md:block md:ml-6'>
               <div className='flex items-center'>
                 { providers && Object.values(providers).map((provider, index) => (

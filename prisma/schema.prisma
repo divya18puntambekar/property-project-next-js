@@ -35,7 +35,7 @@ model Properties {
   description   String
   propertyType  String
   square_feet   Int
-  house_no      String
+  house_no      String?
   street        String
   city          String
   state         String
@@ -47,6 +47,9 @@ model Properties {
   amenties      String[]
   beds          Int
   baths         Int
+  seller_name   String
+  seller_email  String
+  seller_phone  String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

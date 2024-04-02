@@ -2,16 +2,31 @@ import CredentialsProvider, { CredentialsConfig }  from "next-auth/providers/cre
 import NextAuth, { SessionStrategy } from 'next-auth';
 import { connectToDb } from "@/app/utils";
 import prisma from "../../../../../prisma";
+import bcrypt from 'bcryptjs'
 
 const credentialsProvider: any = {
   name: "credentials",
-  credentials: {},
+  credentials: {
+    email: { label: "email", type: "text"},
+    password: { label: "Password", type: "password" }
+  },
   async authorize(credentials: Record<string, string> | undefined, req: any) {
-    const user = { id: 38 };
-    // const user = prisma.user.findFirst{ where:{
-    //     id: user. id
-    // }};
-    return user;
+    if(credentials){
+      const user = await prisma.user.findFirst({
+        where:{
+          email: credentials.email
+        }
+      });    
+      
+      const passwordMatches = await bcrypt.compare(credentials.password, user.password);
+      if (passwordMatches) {
+        return user
+      } else {
+        return null
+      }
+    } else {
+      return null
+    }
   }
 };
 
@@ -30,7 +45,7 @@ const authOptions = {
     callbacks: {
       async signIn({ profile }) {
         await connectToDb();
-        const userExists = await prisma.user.findUnique({
+        const userExists = await prisma.user.findFirst({
           where: {
             email: profile.email
           }
