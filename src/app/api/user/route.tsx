@@ -4,10 +4,8 @@ import prisma from "../../../../prisma";
 
 export const POST = async(req: Request) => {
     await connectToDb();
-    console.log("fuiwg");
     try {
         const { name, email, username, contact, password } = await req.json();
-        console.log(name, email, username, contact, password);
         // user already exists
         const existingUser = await prisma.user.findFirst({ where: {email: email} });
         if(existingUser){

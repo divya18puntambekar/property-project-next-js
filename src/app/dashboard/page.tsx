@@ -1,9 +1,11 @@
-import React from 'react'
-
+import { Hero, Infoboxes, HomepageProperties, Footer } from "../api/route/route";
 const page = () => {
   return (
     <>
-    
+     <Hero />
+     <Infoboxes />
+     <HomepageProperties />
+     <Footer />
     </>
   )
 }

@@ -21,7 +21,7 @@ model User {
   password             String
   contact              String
   gender               String?
-  image                String?
+  image                String? 
   bookmarkedProperties Properties[]
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -40,16 +40,36 @@ model Properties {
   city          String
   state         String
   zipcode       String
-  image         String[]
-  weekly_rates  Int
-  monthly_rates Int
+  images         String[]
+  weekly_rates  Int?
+  monthly_rates Int?
   nightly_rates Int?
-  amenties      String[]
+  amenities     String[]
   beds          Int
   baths         Int
   seller_name   String
   seller_email  String
   seller_phone  String
+  propertyAmenities PropertyAmenities[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model PropertyTypeData {
+  id    Int @id @default(autoincrement())
+  name  String
+}
+
+model AmenitiesData {
+  id            Int @id @default(autoincrement())
+  name          String
+  propertyAmenities PropertyAmenities[]
+}
+
+model PropertyAmenities {
+  id            Int @id @default(autoincrement())
+  property      Properties @relation(fields: [propertyId], references: [id])
+  propertyId    Int
+  amentiesData  AmenitiesData @relation(fields: [amentiesDataId], references: [id])
+  amentiesDataId     Int
 }

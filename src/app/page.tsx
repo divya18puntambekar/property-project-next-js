@@ -1,11 +1,12 @@
-import { Hero, Infoboxes, HomepageProperties, Footer } from "./api/route/route";
-export default function Home() {
+// page.tsx
+
+import React from 'react';
+import DashboardPage from './dashboard/page'; // Importing the exported component
+
+const Home = () => {
   return (
-    <>
-     <Hero />
-     <Infoboxes />
-     <HomepageProperties /> 
-     <Footer />
-    </>
+    <DashboardPage /> 
   );
 }
+
+export default Home;

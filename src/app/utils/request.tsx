@@ -26,4 +26,28 @@ async function fetchProperty(id: any) {
         console.log(error);
     }
 }
-export { fetchProperties, fetchProperty }
+
+async function fetchAmenitiesData(){
+    try{
+        const response = await axios.get('/api/amenitiesdata');
+        if(response.status === 200 ){
+            return response.data;
+        }
+        throw new Error('Failed to fetch property data')
+    }catch(error){
+        console.log(error);
+    }
+}
+
+async function fetchPropertyType(){
+    try{
+        const response = await axios.get('/api/amenitiesdata');
+        if(response.status === 200 ){
+            return response.data;
+        }
+        throw new Error('Failed to fetch property data')
+    }catch(error){
+        console.log(error);
+    }
+}
+export { fetchProperties, fetchProperty, fetchAmenitiesData }

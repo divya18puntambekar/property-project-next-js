@@ -1,6 +1,7 @@
 import { connectToDb } from "@/app/utils";
 import { NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
+
 connectToDb();
 // get : /api/properties/[id]
 export const GET = async(req: Request, {params}: {params: any}) => {

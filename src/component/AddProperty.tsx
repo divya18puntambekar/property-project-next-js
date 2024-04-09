@@ -1,14 +1,48 @@
 "use client"
-import React, { useState } from "react";
-import { PropertyLocation, PropertySeller, PropertyAmenites, PropertyRates } from "@/app/api/route/route";
+import React, { useEffect, useState } from "react";
+import { fetchAmenitiesData } from '@/app/utils/request';
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+interface Amenity {
+  name: string;
+}
+interface PropertyType {
+  name: string;
+}
+interface FormData {
+  name: string;
+  description: string;
+  propertyType: string;
+  square_feet: string;
+  street: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  images: string[];
+  nightly_rates: string;
+  weekly_rates: string;
+  monthly_rates: string;
+  amenities: string[];
+  beds: string;
+  baths: string;
+  seller_name: string;
+  seller_email: string;
+  seller_phone: string;
+}
+
 const AddProperty = () => {
-  const [formData, setFormData] = useState({
-    property_type: "",
-    listing_name: "",
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [properties, setProperties] = useState<PropertyType[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    propertyType: "",
+    name: "",
     street: "",
     city: "",
     state: "",
-    zip: "",
+    zipcode: "",
     description: "",
     nightly_rates: "",
     weekly_rates: "",
@@ -19,32 +53,123 @@ const AddProperty = () => {
     seller_name: "",
     seller_email: "",
     seller_phone: "",
-    amenities: []
+    amenities: [],
+    images: []
   })
 
-  const onHandleChange = (event: any) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchAmenities = await fetchAmenitiesData();              
+        setAmenities(fetchAmenities.amenityData);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+  })
+  const onHandleInputChange = (event: any) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value
     })
   }
-  const onSubmitForm = (event: any) =>{
+  const onHandleAmenitiesChange = (event: any) => {
+    const { value, checked } = event.target;
+    const updatedAmenities = [...formData.amenities];
+    if(checked) {
+      updatedAmenities.push(value);
+    } else {
+      const index = updatedAmenities.indexOf(value);
+      if (index !== -1) {
+        updatedAmenities.splice(index, 1);
+      }
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      amenities: updatedAmenities
+    }))
+  }
+  const onHandleImageChange = (event: any) => {
+    const { files } = event.target;
+    const updatedImages = [...formData.images];
+    for(const file of files) {
+      updatedImages.push(file.name);
+    }
+    console.log("updated images nmae",updatedImages);
+    
+    setFormData((prevData) => ({
+      ...prevData,
+      images: updatedImages
+    }))
+  }
+  const onSubmitForm = async (event: any) =>{
     event.preventDefault();
-    console.log("submit");;
-      
+    console.log("submit");
+    console.log("formdata",formData);
+    try{
+      const response = await axios.post("/api/properties", {
+        propertyType: formData.propertyType,
+        name: formData.name,
+        street: formData.street, 
+        city: formData.city,
+        state: formData.state,
+        zipcode: formData.zipcode,
+        description: formData.description,
+        nightly_rates: formData.nightly_rates,
+        weekly_rates: formData.weekly_rates,
+        monthly_rates: formData.monthly_rates,
+        beds: formData.beds,
+        baths: formData.baths,
+        square_feet: formData.square_feet,
+        seller_name: formData.seller_name,
+        seller_email: formData.seller_email,
+        seller_phone: formData.seller_phone,
+        images: formData.images,
+        amenities: formData.amenities
+    });
+      console.log("response", response);
+      if(response.status === 200){
+        // router.push("/login");
+        toast.success('Property added successfully!');
+      }
+    }catch(error){
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
+          const responseData = axiosError.response.data;
+          if (typeof responseData === 'string') {
+            toast.error(responseData);
+          } else if (responseData.error === "User already exists!") {
+            toast.error('User already exists!');
+          } else {
+            toast.error('An error occurred while registering. Please try again later.', { position: "bottom-left" });
+          }
+        } else {
+          toast.error('An error occurred while registering. Please try again later.', { position: "bottom-left" });
+        }
+      }
+    }
   }
   return (
     <form className="m-4 w-10/12 my-12 ml-28 bg-white border-gray-400 shadow-xl pb-12" onSubmit={onSubmitForm}>
       <h1 className="text-black font-bold text-3xl pl-4 pt-4">Sell or Rent Your Property</h1>
       <div className="w-11/12 m-4">
         <label
-          htmlFor="property_type"
+          htmlFor="propertyType"
           className="block mb-2 font-medium text-gray-900 dark:text-white"
         >
           Property Type
         </label>
         <select
-          id="property_type"
+          id="propertyType"
+          name="propertyType"
+          value={formData.propertyType} // Add value attribute
+          onChange={onHandleInputChange} // Add onChange handler
           className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
           <option value="apartment" selected>
@@ -60,17 +185,17 @@ const AddProperty = () => {
       </div>
       <div className="w-11/12 m-4">
         <label
-          htmlFor="listing_name"
+          htmlFor="name"
           className="block mb-2 font-medium text-gray-900 dark:text-white"
         >
           Listing Names
         </label>
         <input
           type="text"
-          id="listing_name"
+          id="name" name = "name"
           className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          onChange={onHandleChange} value={formData.listing_name}
-          required
+          onChange={onHandleInputChange} value={formData.name}
+          
         />
       </div>
       <div className="w-11/12 m-4">
@@ -82,9 +207,9 @@ const AddProperty = () => {
         </label>
         <textarea
           id="property_description"
-          rows="4"
+          rows={4} name="description"
           className="block p-2.5 w-full  text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Write property description here..." onChange={onHandleChange} value={formData.description}
+          placeholder="Write property description here..." onChange={onHandleInputChange} value={formData.description}
         ></textarea>
       </div>
       
@@ -98,33 +223,35 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="square_feet"
-            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleChange} value={formData.square_feet}
-            required
+            id="square_feet" name="square_feet"
+            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleInputChange} value={formData.square_feet}
+            
           />
         </div>
         <div>
           <label htmlFor="beds" className="block mb-2  font-medium text-gray-900 dark:text-white">Bedrooms</label>
-          <input type="number" id="beds"    aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required onChange={onHandleChange} value={formData.beds} />
+          <input type="number" id="beds"  name="beds"  aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0"  onChange={onHandleInputChange} value={formData.beds} />
         </div>
         <div>
           <label htmlFor="baths" className="block mb-2  font-medium text-gray-900 dark:text-white">Bathrooms</label>
-          <input type="number" id="baths"    aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={onHandleChange} value={formData.baths} placeholder="0" required />
+          <input type="number" id="baths"  name="baths"  aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={onHandleInputChange} value={formData.baths} placeholder="0"  />
         </div>       
       </div>
       <div className="w-11/12 m-4">
         <label
-          htmlFor="image"
+          htmlFor="images"
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
           Image (upto 4)
         </label>
         <input
           type="file"
-          id="image"
-          accept="image/png, image/jpeg"
+          id="images"
+          accept="image/*" 
+          multiple
           className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          required
+          onChange={onHandleImageChange}
+          name="images"
         />
         
       </div>
@@ -146,9 +273,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="nightly"
-            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleChange} value={formData.nightly_rates}
-            required
+            id="nightly" name="nightly_rates"
+            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleInputChange} value={formData.nightly_rates}
+            
           />
         </div>
         <div>
@@ -160,9 +287,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="weekly"
-            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleChange} value={formData.weekly_rates}
-            required
+            id="weekly" name="weekly_rates"
+            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleInputChange} value={formData.weekly_rates}
+            
           />
         </div>
         <div>
@@ -174,9 +301,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="monthly"
-            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleChange} value={formData.monthly_rates}
-            required
+            id="monthly" name="monthly_rates"
+            className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" onChange={onHandleInputChange} value={formData.monthly_rates}
+            
           />
         </div>
       </div>
@@ -195,9 +322,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="street"
+            id="street" name="street"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.street}
+             onChange={onHandleInputChange} value={formData.street}
           />
         </div>
         <div>
@@ -209,9 +336,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="city"
+            id="city" name="city"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.city}
+             onChange={onHandleInputChange} value={formData.city}
           />
         </div>
       </div>
@@ -225,18 +352,18 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="state"
+            id="state" name="state"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.state}
+             onChange={onHandleInputChange} value={formData.state}
           />
         </div>
 
         <div>
           <label
-            htmlFor="zip-input"
+            htmlFor="zipcode-input"
             className="block mb-2  font-medium text-gray-900 dark:text-white"
           >
-            ZIP code:
+            zipcode code:
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 top-0 flex items-center ps-3.5 pointer-events-none">
@@ -252,12 +379,12 @@ const AddProperty = () => {
             </div>
             <input
               type="text"
-              id="zip-input"
+              id="zipcode-input" name="zipcode"
               aria-describedby="helper-text-explanation"
               className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="12345"
               pattern="^\d{5}(-\d{4})?$"
-              required onChange={onHandleChange} value={formData.zip}
+               onChange={onHandleInputChange} value={formData.zipcode}
             />
           </div>
         </div>
@@ -279,9 +406,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="seller_name"
+            id="seller_name" name="seller_name"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.seller_name}
+             onChange={onHandleInputChange} value={formData.seller_name}
           />
         </div>
         <div>
@@ -293,9 +420,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="seller_email"
+            id="seller_email" name="seller_email"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.seller_email}
+             onChange={onHandleInputChange} value={formData.seller_email}
           />
         </div>
         <div>
@@ -307,9 +434,9 @@ const AddProperty = () => {
           </label>
           <input
             type="text"
-            id="seller_phone"
+            id="seller_phone" name="seller_phone"
             className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required onChange={onHandleChange} value={formData.seller_phone}
+             onChange={onHandleInputChange} value={formData.seller_phone}
           />
         </div>
       </div>
@@ -317,85 +444,17 @@ const AddProperty = () => {
       {/* <PropertySeller /> */}
       <hr />
       <div className="w-11/12 m-4"> 
-        <div className='text-xl font-bold mt-2'>Amenities</div>
-        <div className='grid grid-cols-3 m-4'>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="wifi" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="wifi" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Wifi</label>
-                </div>
+            <div className='text-xl font-bold mt-2'>Amenities</div>
+            <div className= "grid grid-cols-3 gap-4">
+                {amenities.map((amenity, index) => (
+                    <div >
+                     <input id={amenity.name.toLowerCase()} type="checkbox" value={amenity.name} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleAmenitiesChange} checked={formData.amenities.includes(amenity.name)}/>
+                    <label htmlFor={amenity.name.toLowerCase()} className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{amenity.name}</label> 
+                    </div>
+                ))}
+                
             </div>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="free_parking" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="free_parking" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Free Parking</label>
-                </div>
-            </div>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="security" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="security" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">24/7 Security</label>
-                </div>  
-            </div>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="dishwasher" type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="dishwasher" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Dishwasher</label>
-                </div>
-            </div>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="balcony" type="checkbox" value="balcony" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="balcony" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Balcony</label>
-                </div>
-            </div>
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="kitchen" type="checkbox" value="kitchen" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"  onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="kitchen" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Kitchen</label>
-                </div>
-            </div>
-
-            <div>
-            <div className="flex items-center mb-4">
-                    <input id="pool" type="checkbox" value="pool" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                    <label htmlFor="pool" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Swimming pool</label>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center mb-4">
-                    <input id="gym" type="checkbox" value="gym" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="gym" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Gym</label>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center mb-4">
-                    <input id="tv" type="checkbox" value="tv" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="tv" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Television</label>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center mb-4">
-                    <input id="washer" type="checkbox" value="washer" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="washer" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Washer & Dryer</label>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center mb-4">
-                    <input id="elevator" type="checkbox" value="elevator" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities} />
-                    <label htmlFor="elevator" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Elevator</label>
-                </div>
-            </div>
-            <div>
-                <div className="flex items-center mb-4">
-                    <input id="ac" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleChange} value={formData.amenities.ac} />
-                    <label htmlFor="ac" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Air Conditioning</label>
-                </div>
-            </div>
-        </div>
-    </div>
-      {/* <PropertyAmenites /> */}
-      {/* <hr /> */}
+        </div>      
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-4 mt-4 rounded-xl">Add Property</button>
     </form>
   );
