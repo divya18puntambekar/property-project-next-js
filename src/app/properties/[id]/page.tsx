@@ -2,9 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { fetchProperty } from '@/app/utils/request';
-import { PropertyHeaderImage, PropertyDetails, PropertySidebar, Spinner } from "@/app/api/route/route";
+import { PropertyHeaderImage, PropertyDetails, PropertySidebar, Spinner, Footer } from "@/app/api/route/route";
 import Link from 'next/link';
-import PropertyImages from '@/component/PropertyImages';
 
 const PropertyPage = () => {
   const { id } = useParams();
@@ -43,7 +42,7 @@ const PropertyPage = () => {
     {!isLoading && property &&(  
      <>
       <div className='m-auto'> 
-      <PropertyHeaderImage images = {property.images} />
+        <PropertyHeaderImage images={(property as { images: string[] }).images} />
       </div>
       <div className='container-xl m-auto'>
         <Link href="/properties" className="text-xl text-blue-500 hover:text-blue-700 font-serif text-right ml-3 ">
@@ -62,7 +61,7 @@ const PropertyPage = () => {
         </div>
       </section>
       <section>
-      
+      <Footer />
       </section>
      </>
     )}

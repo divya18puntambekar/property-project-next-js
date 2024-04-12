@@ -15,14 +15,22 @@ const PropertyCard = ({property}:Props) => {
   return (
     <>
     <div className="rounded-xl shadow-md relative">
-        <Image
-          src={`/assets/images/${property.images[0]}`}
+    <Image
+          src={`/assets/amenitiesSvg/wifi.svg`}
           alt="property"
           width={0}
           height={0}
           sizes="100vw"
           className="rounded-t-xl w-96 h-72"
         />
+        {/* <Image
+          src={`/assets/images/${property.images[0]}`}
+          alt="property"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="rounded-t-xl w-96 h-72"
+        /> */}
         <div className = "p-4">
             <div className="text-left md:text-center lg:text-left mb-6">
                 <div className="text-gray-600">{property.type}</div>
