@@ -24,7 +24,7 @@ body {
 }
 
 .propertyImage{
-  height: 80vh !important;
+  height: 84vh !important;
 }
 
 .bg-image {
@@ -83,6 +83,10 @@ body {
   right: 8%;
 }
 
+.property_images_modal {
+  top: 90%;
+  left: 88%;
+}
 /* .signup_page_right_panel {
   width: 60%;
   padding: 1% 8%;

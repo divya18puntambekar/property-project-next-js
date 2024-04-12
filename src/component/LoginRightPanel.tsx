@@ -24,7 +24,7 @@ const LoginRightPanel = () => {
         toast.error(login.error);
         return error 
       } 
-      router.push("/");
+      router.push("/dashboard");
       toast.success('Logged in successfully!');
       setLoading(false);
     }

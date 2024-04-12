@@ -1,9 +1,10 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { fetchAmenitiesData } from '@/app/utils/request';
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 interface Amenity {
   name: string;
 }
@@ -32,10 +33,12 @@ interface FormData {
 }
 
 const AddProperty = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [properties, setProperties] = useState<PropertyType[]>([]);
+  const userDetails = session?.user;
+  const [userId, setUserId] = useState('');
   const [formData, setFormData] = useState<FormData>({
     propertyType: "",
     name: "",
@@ -67,11 +70,21 @@ const AddProperty = () => {
       }
     };
     fetchData();
-  }, []);
 
-  useEffect(() => {
     setMounted(true);
-  })
+    async function fetchUserData() {
+      const users_email = userDetails?.email;
+      const response = await axios.get('/api/user');
+      const data = await response.data;     
+      const matchedUser = data.userData.find(user => user.email === users_email);
+      if (matchedUser) {
+        const users_id = matchedUser.id;
+        setUserId(users_id);
+      } 
+    }
+    fetchUserData();
+  }, []);
+  
   const onHandleInputChange = (event: any) => {
     setFormData({
       ...formData,
@@ -109,10 +122,9 @@ const AddProperty = () => {
   }
   const onSubmitForm = async (event: any) =>{
     event.preventDefault();
-    console.log("submit");
-    console.log("formdata",formData);
     try{
       const response = await axios.post("/api/properties", {
+        userId: parseInt(userId),
         propertyType: formData.propertyType,
         name: formData.name,
         street: formData.street, 
@@ -120,21 +132,20 @@ const AddProperty = () => {
         state: formData.state,
         zipcode: formData.zipcode,
         description: formData.description,
-        nightly_rates: formData.nightly_rates,
-        weekly_rates: formData.weekly_rates,
-        monthly_rates: formData.monthly_rates,
-        beds: formData.beds,
-        baths: formData.baths,
-        square_feet: formData.square_feet,
+        nightly_rates: parseInt(formData.nightly_rates),
+        weekly_rates: parseInt(formData.weekly_rates),
+        monthly_rates: parseInt(formData.monthly_rates),
+        beds: parseInt(formData.beds),
+        baths: parseInt(formData.baths),
+        square_feet: parseInt(formData.square_feet),
         seller_name: formData.seller_name,
         seller_email: formData.seller_email,
         seller_phone: formData.seller_phone,
         images: formData.images,
         amenities: formData.amenities
     });
-      console.log("response", response);
       if(response.status === 200){
-        // router.push("/login");
+        router.push('/properties')
         toast.success('Property added successfully!');
       }
     }catch(error){
@@ -172,7 +183,7 @@ const AddProperty = () => {
           onChange={onHandleInputChange} // Add onChange handler
           className="bg-gray-50 border border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
-          <option value="apartment" selected>
+          <option value="apartment" defaultValue = "true">
             Apartment
           </option>
           <option value="room">Room</option>
@@ -447,7 +458,7 @@ const AddProperty = () => {
             <div className='text-xl font-bold mt-2'>Amenities</div>
             <div className= "grid grid-cols-3 gap-4">
                 {amenities.map((amenity, index) => (
-                    <div >
+                    <div key={index}>
                      <input id={amenity.name.toLowerCase()} type="checkbox" value={amenity.name} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onChange={onHandleAmenitiesChange} checked={formData.amenities.includes(amenity.name)}/>
                     <label htmlFor={amenity.name.toLowerCase()} className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{amenity.name}</label> 
                     </div>

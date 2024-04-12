@@ -74,7 +74,7 @@ const Navbar = () => {
 
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             {/* <!-- Logo --> */}
-            <Link className="flex flex-shrink-0 items-center" href="/">
+            <Link className="flex flex-shrink-0 items-center" href="/dashboard">
               <Image className="h-12 w-auto" src={logo} alt="PropertyPulse" />
 
               <span className="hidden md:block text-white text-2xl font-bold ml-2">
@@ -85,9 +85,9 @@ const Navbar = () => {
             <div className="hidden md:ml-6 md:block">
               <div className="flex space-x-2">
                 <Link
-                  href="/"
+                  href="/dashboard"
                   className={`${
-                    pathname === "/" ? "bg-black" : ""
+                    pathname === "/dashboard" ? "bg-black" : ""
                   } text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 m-4`}
                 >
                   Home
@@ -239,9 +239,9 @@ const Navbar = () => {
         <div id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
             <Link
-              href="/"
+              href="/dashboard"
               className={`${
-                pathname === "/" ? "bg-black" : ""
+                pathname === "/dashboard" ? "bg-black" : ""
               } text-white block rounded-md px-3 py-2 text-base font-medium`}
             >
               Home

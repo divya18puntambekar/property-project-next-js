@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { fetchProperty } from '@/app/utils/request';
 import { PropertyHeaderImage, PropertyDetails, PropertySidebar, Spinner } from "@/app/api/route/route";
 import Link from 'next/link';
+import PropertyImages from '@/component/PropertyImages';
 
 const PropertyPage = () => {
   const { id } = useParams();
@@ -26,10 +27,6 @@ const PropertyPage = () => {
       fetchPropertyData();
     }
   },[id,property])
-
-  console.log("proprty", property);
-  console.log("loading", isLoading);
-  
   
   if(!isLoading && !property) {
     return (
@@ -46,16 +43,14 @@ const PropertyPage = () => {
     {!isLoading && property &&(  
      <>
       <div className='m-auto'> 
-      <PropertyHeaderImage image = {property.image} />
+      <PropertyHeaderImage images = {property.images} />
       </div>
-      <section>
       <div className='container-xl m-auto'>
         <Link href="/properties" className="text-xl text-blue-500 hover:text-blue-700 font-serif text-right ml-3 ">
-          <span className="inline-flex items-center mt-6"> Back To Properties
+          <span className="inline-flex items-center mt-4"> Back To Properties
           </span>
         </Link>
       </div>
-      </section>
       <section>
         <div className = "bg-blue-50">
           <div className='container m-auto py-10 px-6'>
@@ -63,6 +58,13 @@ const PropertyPage = () => {
               <PropertyDetails property = {property}/>
               < PropertySidebar />
             </div>
+          </div>
+        </div>
+      </section>
+      <section>
+      <div className = "bg-blue-500">
+          <div className='container m-auto py-10 px-6'>
+              <PropertyImages images = {property.images} />
           </div>
         </div>
       </section>

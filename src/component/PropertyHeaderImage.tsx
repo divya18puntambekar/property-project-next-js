@@ -1,13 +1,13 @@
 import Image from "next/image"
-import Link from "next/link"
+import PropertyImagesModal from "./PropertyImagesModal"
+// import Link from "next/link"
 interface Property{
-    images: string
+    images: string[]
 }
 const PropertyHeaderImage = ({images}: Property) => {
   return (
     <section>
-        <div className="container-xl m-auto">
-            <div className="grid grid-cols-1">
+        <div className="container-xl m-auto relative">
                 <Image
                     src={`/assets/images/${images[0]}`}
                     width={0}
@@ -15,9 +15,10 @@ const PropertyHeaderImage = ({images}: Property) => {
                     className="object-cover w-full propertyImage"
                     alt="property"
                     layout= "responsive"
-                    quality={80}
+                    quality={100}
                 />
-
+            <div className='absolute inset-0 property_images_modal '>
+                <PropertyImagesModal images={images} />
             </div>
         </div>
     </section>
