@@ -34,6 +34,11 @@ body {
   width: 100%;
   height: 100vh;
 }
+
+.properties_carousel_images {
+  height: 30rem !important;
+  width: 70rem !important;
+}
 /* 
 .signupPage{
   /* width: 55%;
