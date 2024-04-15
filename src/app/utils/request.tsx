@@ -27,6 +27,19 @@ async function fetchProperty(id: any) {
     }
 }
 
+
+async function fetchUser(id: any) {
+    try{
+        const response = await axios.get(`/api/user/${id}`);
+        if(response.status === 200 ){
+            return response.data;
+        }
+        throw new Error('Failed to fetch user details')
+    }catch(error){
+        console.log(error);
+    }
+}
+
 async function fetchAmenitiesData(){
     try{
         const response = await axios.get('/api/amenitiesdata');
@@ -50,4 +63,4 @@ async function fetchPropertyType(){
         console.log(error);
     }
 }
-export { fetchProperties, fetchProperty, fetchAmenitiesData }
+export { fetchProperties, fetchProperty, fetchAmenitiesData, fetchUser }

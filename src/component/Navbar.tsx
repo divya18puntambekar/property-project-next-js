@@ -13,7 +13,7 @@ const Navbar = () => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [providers, setProviders] = useState(false);
+  const [providers, setProviders] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
   const [profile, savedProfile] = useState({})
@@ -24,8 +24,6 @@ const Navbar = () => {
   useEffect(() => {
     const setAuthProviders = async () => {
       const response = await getProviders();
-      console.log();
-
       setProviders(response);
     };
     setAuthProviders(); // Call the setAuthProviders function
@@ -204,6 +202,15 @@ const Navbar = () => {
                       id="user-menu-item-0"
                     >
                       Hello, {userName}
+                    </Link>
+                    <Link
+                      href="/propertylist"
+                      className="block px-4 py-2 text-sm text-gray-700"
+                      role="menuitem"
+                      tabIndex={-1}
+                      id="user-menu-item-2"
+                    >
+                      Your Properties
                     </Link>
                     <Link
                       href="/properties/saved"

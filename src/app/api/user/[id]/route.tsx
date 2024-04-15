@@ -2,19 +2,20 @@ import { connectToDb } from "@/app/utils";
 import { NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
 
-// get : /api/properties/[id]
+connectToDb();
+// get : /api/user/[id]
 export const GET = async(req: Request, {params}: {params: any}) => {
     try {
-        await connectToDb();
-        const propertyData = await prisma.properties.findUnique({
+        
+        const userData = await prisma.user.findUnique({
             where: {
                 id: parseInt(params.id)
             }
         });
-        if(!propertyData){
-            return NextResponse.json( "Property not found", {status: 404});
+        if(!userData){
+            return NextResponse.json( "User not found", {status: 404});
         }
-        return NextResponse.json({ propertyData }, { status: 200 });
+        return NextResponse.json({ userData }, { status: 200 });
     } catch(error: any){
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

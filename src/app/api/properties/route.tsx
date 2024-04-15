@@ -11,12 +11,11 @@ export const POST = async (req: Request) => {
     // console.log("session",session);
     
     try {
-        const { userId, name, description, square_feet, propertyType, house_no, street, city, state, zipcode, images, weekly_rates, monthly_rates, nightly_rates, beds, baths, amenities, seller_name, seller_email, seller_phone } = await req.json();      
-        console.log("images==================",images);
+        const { userId, name, description, square_feet, propertyType, house_no, street, city, state, zipcode, images, weekly_rates, monthly_rates, nightly_rates, beds, baths, amenities, seller_name, seller_email, seller_phone } = await req.json(); 
         
         const propertyData = await prisma.properties.create({
             data: {
-                userId,
+                userId: userId,
                 name,
                 description,
                 square_feet,
