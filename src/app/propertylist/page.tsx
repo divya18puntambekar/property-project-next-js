@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { fetchProperties } from "../utils/request";
+import { FaEdit, FaTrash, FaInfoCircle } from "react-icons/fa";
 interface Property {
   name: string;
   email: string;
   images: string[];
   propertyType: string;
   street: string;
+  monthly_rates: number;
 }
 const page = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -29,27 +31,39 @@ const page = () => {
   });
 
   return (
-    <div>
+    <div className="bg-blue-100">
       <h2 className="text-2xl font-semibold mb-4 text-center font-serif">
         Property List
       </h2>
       {properties &&
         properties.map((property, index) => (
-          <div className="bg-indigo-400 my-8" key={index}>
-            <div className="mb-1 p-4 ml-10 flex flex-row">
+          <div
+            className="bg-gray-100 shadow-md my-8 rounded-lg relative"
+            key={index}
+          >
+            <div className="flex flex-row">
               <div>
                 <Link href="/properties">
                   <Image
-                    src={`/assets/images/${property.images[0]}`}  // Add a leading slash to the src path
-                    width={250}
-                    height={250}
+                    src={`/assets/images/${property.images[0]}`}
+                    width={200} // Set the desired width (e.g., 400 pixels)
+                    height={300} // Set the desired height (e.g., 300 pixels)
                     alt="property"
-                    quality={100}
+                    className="w-64 h-48 mr-4 object-cover"
                   />
-
                 </Link>
               </div>
-              <div>
+              <div className="mt-2">
+                <p className="text-lg font-semibold uppercase">
+                  {property.propertyType}
+                </p>
+                <p className="text-gray-600">{property.name}</p>
+                <p className="text-gray-600">{property.street}</p>
+                <p className="text-gray-600">
+                  Monthly rates: ${property.monthly_rates}{" "}
+                </p>
+              </div>
+              {/* <div>
                 <table className="ml-8">
                   <tbody>
                     <tr className=" dark:bg-gray-800 dark:border-gray-700">
@@ -68,7 +82,7 @@ const page = () => {
                       >
                         Name
                       </th>
-                      <td className="px-6 py-4">{property.name}</td>
+                      <td className="px-6">{property.name}</td>
                     </tr>
                     <tr className=" dark:bg-gray-800 dark:border-gray-700">
                       <th
@@ -81,11 +95,24 @@ const page = () => {
                     </tr>
                   </tbody>
                 </table>
-              </div>
+              </div> */}
             </div>
-            <div className="flex justify-end mt-2 px-6 ">
-              <Link href="/editproperty" className="bg-blue-300 mb-4 mr-4 p-1 w-32 text-center hover:bg-blue-600 rounded-lg">Edit</Link>
-              <button className="bg-red-600 mb-4 mr-4 p-1 w-32 text-center rounded-lg">Delete</button>
+            <div className="flex justify-end mt-2 px-6 absolute bottom-0 right-0 ">
+            <Link
+              href="/editproperty"
+              className="mb-4 mr-4 p-1 w-8 rounded-full text-center flex justify-center items-center"
+            >
+              <FaInfoCircle className="h-8 w-8" />
+            </Link>
+              <Link
+                href="/editproperty"
+                className="mb-4 mr-4 p-1 w-8 rounded-full text-center flex justify-center items-center"
+              >
+                <FaEdit className="h-8 w-8" />
+              </Link>
+              <button className="mb-4 mr-4 p-1 w-8 rounded-full text-center flex justify-center items-center">
+                <FaTrash className="h-8 w-8"/>
+              </button>
             </div>
           </div>
         ))}

@@ -5,7 +5,7 @@ const page = () => {
      <Hero />
      <Infoboxes />
      <HomepageProperties />
-     <Footer />
+     {/* <Footer /> */}
     </>
   )
 }

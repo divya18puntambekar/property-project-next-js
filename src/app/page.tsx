@@ -2,13 +2,16 @@
 
 import React from 'react';
 import DashboardPage from './dashboard/page'; // Importing the exported component
-import { Footer } from './api/route/route';
+import { Footer, Hero, HomepageProperties, Infoboxes } from './api/route/route';
 
 const Home = () => {
   return (
     <>
-      <DashboardPage /> 
-      {/* <Footer /> */}
+      {/* <DashboardPage /> 
+       */}
+       <Hero />
+     <Infoboxes />
+     <HomepageProperties />
     </>
   );
 }

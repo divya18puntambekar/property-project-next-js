@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   const cookie = request.cookies.get("next-auth.session-token");
 
   if(!cookie && !(public_path || path === "/dashboard")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+    return NextResponse.redirect(new URL("/", request.url))
   } else if (cookie && public_path) {
     return NextResponse.redirect(new URL("/dashboard", request.url))
   } 
@@ -21,6 +21,8 @@ export const config = {
     '/Signup',
     '/dashboard',
     '/properties/saved',
-    '/properties/add'
+    '/properties/add',
+    '/profile',
+    '/propertylist'
   ],
 }

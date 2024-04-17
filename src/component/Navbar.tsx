@@ -6,7 +6,6 @@ import Link from "next/link";
 import logo from "@/assets/images/logo.png";
 import profileDefault from "@/assets/images/profile.png";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
-import { useRouter } from "next/navigation";
 // import { cookies } from "next/headers";
 
 const Navbar = () => {
@@ -14,29 +13,19 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [providers, setProviders] = useState<boolean>(false);
-  const router = useRouter();
   const pathname = usePathname();
   const [profile, savedProfile] = useState({})
 
-  // const profileName = async() =>{
-  //    const response  = cookies().get(name)
-  // }
   useEffect(() => {
     const setAuthProviders = async () => {
       const response = await getProviders();
       setProviders(response);
     };
-    setAuthProviders(); // Call the setAuthProviders function
+    setAuthProviders();
   }, []);
 
-  // if (!session) {
-  //   {console.log("session if ::::::",session);}
-  //   return <div>Loading...</div>;
-  // }
-  // console.log("session",session);
   const userName = session?.user?.name;
-  // console.log("username", userName);
-  
+  console.log(session);
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -271,16 +260,6 @@ const Navbar = () => {
                 Add Property
               </Link>
             )}
-
-            {/* {session && (
-            <div className='hidden md:block md:ml-6'>
-              <div className='flex items-center'>
-                { providers && Object.values(providers).map((provider, index) => (
-                  <button onClick= {() => signIn(provider.id)}className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4' key={index}>Login or Register</button>
-                ))}
-              </div>
-            </div> */}
-            {/* )} */}
           </div>
         </div>
       )}
